@@ -1,0 +1,102 @@
+{# Metaebene overview-page template v0.2 #}
+
+{# group - define the contributor group to be listed #}
+{# role - define the contributor role to be listed #}
+{# contributor_column - define the contributor role to be listed #}
+
+
+{% import "metaebene-macros" as metaebene %}
+
+{% if not avatar_size %}
+  {% set avatar_size = '64' %}
+{% endif %}
+
+{% set episode_count = 0 %}
+{% for episode in podcast.episodes %}
+    {% set episode_count = episode_count + 1 %}
+    {% if episode_count == 1 %}
+		{# Featured Episode #}
+
+        <div class="featured-episode">
+            <h1 class="entry-title"><a title="{{ episode.title }}" href="{{ episode.url }}">{{ episode.title }}</a></h1>
+            <p class="episode_subtitle"><strong><em>{{ episode.subtitle }}</em></strong></p>
+
+            <p class="episode_meta">
+                    {{ metaebene.print_date(episode.publicationDate, language) }} 
+                    {{ metaebene.print_duration(episode.duration, language) }}
+			</p>
+
+            {{ episode.player }}
+
+			{% if episode.contributors({group: group, role: role}) %}
+			<div style="float:right; margin-left: 10px;">
+				<table>
+					<colgroup>
+					{% for contributor in episode.contributors({group: group, role: role}) %}
+				    	<col width="{{ avatar_size }}px" />
+			        {% endfor %}
+					</colgroup>
+						<tr>
+						{% for contributor in episode.contributors({group: group, role: role}) %}
+				    	<td style="vertical-align: top; width: {{ avatar_size }}px">
+							<img src="{{ contributor.avatar.url }}" title="{{ contributor.name }}" height="{{ avatar_size }}" width="{{ avatar_size }}"/ /><br/>
+							<strong>{{ contributor.name }}</strong>
+			                {%if contributor.comment %}
+			                <br/>
+			                <em>{{ contributor.comment }}</em>
+			                {% endif %}
+			            </td>
+			            {% endfor %}
+					</tr>
+			    </table>
+			</div>
+			{% endif %}
+
+            <p class="episode_summary">{{ episode.summary }}</p>
+			
+		</div>
+    {% endif %}
+{% endfor %}
+
+{% if episode_count > 1 %}
+    <div class="recent-episodes">
+		<table>
+		{% set episode_count = 0 %}
+		{% set recent_episodes = 5 %}
+
+	    <colgroup>
+	        <col id="episode_icon" width="{{ icon_size + 16 }}" />
+	        <col id="episode_description" />
+		</colgroup>
+
+	    {% for episode in podcast.episodes %}
+		    {% set episode_count = episode_count + 1 %}
+		    {% set recent_episodes = recent_episodes - 1 %}
+		    {% if recent_episodes > 0 %}
+		        <tr id="{{ episode.slug }}" class="archive_episode_row">
+		            <td class="episode_icon">
+		                <a href="{{ episode.url }}"><img src="{{ episode.imageUrlWithFallback }}" width="{{ icon_size }}" height="{{ icon_size }}"></a>
+		            </td>
+		            <td class="episode_description">
+		                <div class="episode_title"><a href="{{ episode.url }}">{{ episode.title }}</a></div>
+		                <div class="episode_subtitle">{{ episode.subtitle }}</div>
+
+		                <div class="episode_meta">
+		                    {{ metaebene.print_date(episode.publicationDate, language) }} {{ metaebene.print_duration(episode.duration, language) }}
+		                </div>
+		            </td>
+		        </tr>
+			{% endif %}
+	    {% endfor %}
+	    </tbody>
+
+    </div>
+{% endif %}
+
+<style>
+div.featured-episode {
+	background-color: #eee;
+}
+
+
+</style>

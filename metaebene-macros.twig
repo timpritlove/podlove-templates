@@ -1,0 +1,47 @@
+{# Metaebene Macros #}
+
+
+
+
+{% macro translate(term, language) %}
+	{% set localization_table =
+	    {
+	        "minute":   { en: "minute",     de: "Minute"    },
+	        "minutes":  { en: "minutes",    de: "Minuten"   },
+	        "hour":     { en: "hour",       de: "Stunde"    },
+	        "hours":    { en: "hours",      de: "Stunden"   }
+	    }
+	%}
+	{% if not language %}
+		{% set language = 'en' %}
+	{% endif %}
+	{{ localization_table [term][language] }}
+{% endmacro %}
+
+{% macro print_date(date, language) %}
+	{% import _self as meta %}
+
+	{% set calendar_icon_url = 'http://meta.metaebene.me/media/metaebene/images/icon-calendar-128x128.png' %}
+
+	<img class="tiny_icon" src="{{ calendar_icon_url }}" width="16" height="16" /> {{ date.format('d.m.Y') }}
+{% endmacro %}
+
+{% macro print_duration(duration, language) %}
+	{% import _self as meta %}
+
+	{% set time_icon_url = 'http://meta.metaebene.me/media/metaebene/images/icon-time-128x128.png' %}
+
+	<img class="tiny_icon" src="{{ time_icon_url }}" width="16" height="16" />                    
+	{% if duration.hours == 1 %}
+		{{ duration.hours }} {{ meta.translate("hour", language) }}
+	{% elseif duration.hours != 0 %}
+		{{ duration.hours }} {{ meta.translate("hours", language) }}
+	{% endif %}
+
+	{% if duration.minutes == 1 %}
+		{{ duration.minutes }} {{ meta.translate("minute", language) }}
+	{% elseif duration.minutes != 0 %}
+		{{ duration.minutes }} {{ meta.translate("minutes", language) }}
+	{% endif %}
+
+{% endmacro %}

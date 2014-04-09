@@ -1,8 +1,11 @@
-{# Metaebene podcast-archive template v1.2.1 #}
+{# Metaebene podcast-archive template v1.3 #}
 
 {# group - define the contributor group to be listed #}
 {# role - define the contributor role to be listed #}
 {# contributor_column - define the contributor role to be listed #}
+
+{% import "metaebene-macros" as metaebene %}
+
 
 {% set icon_size = '96' %}
 
@@ -10,22 +13,6 @@
   {% set avatar_size = '48' %}
 {% endif %}
 
-{% set calendar_icon_url = 'http://meta.metaebene.me/media/metaebene/images/icon-calendar-128x128.png' %}
-{% set time_icon_url = 'http://meta.metaebene.me/media/metaebene/images/icon-time-128x128.png' %}
-
-
-{% if not language %}
-	{% set language = 'en' %}
-{% endif %}
-
-{% set translate =
-    {
-        "minute":   { en: "minute",     de: "Minute"    },
-        "minutes":  { en: "minutes",    de: "Minuten"   },
-        "hour":     { en: "hour",       de: "Stunde"    },
-        "hours":    { en: "hours",      de: "Stunden"   }
-    }
-%}
 
 <table>
     <colgroup>
@@ -45,26 +32,18 @@
                 <div class="episode_title"><a href="{{ episode.url }}">{{ episode.title }}</a></div>
 
                 <div class="episode_meta">
-                    <img class="tiny_icon" src="{{ calendar_icon_url }}" width="16" height="16" /> {{ episode.publicationDate.format('d.m.Y') }}<br/><img class="tiny_icon" src="{{ time_icon_url }}" width="16" height="16" />                    
-					{% if episode.duration.hours == 1 %}
-				 		{{ episode.duration.hours }} {{ translate ["hour"][language] }}
-					{% elseif episode.duration.hours != 0 %}
-						{{ episode.duration.hours }} {{ translate ["hours"][language] }}
-					{% endif %}
 
-					{% if episode.duration.minutes == 1 %}
-				 		{{ episode.duration.minutes }} {{ translate ["minute"][language] }}
-					{% elseif episode.duration.minutes != 0 %}
-						{{ episode.duration.minutes }} {{ translate ["minutes"][language] }}
-					{% endif %}
-				</div>
+                    {{ metaebene.print_date(episode.publicationDate, language) }}<br/>
+                    {{ metaebene.print_duration(episode.duration, language) }}
+
+                </div>
 
                 <div class="episode_subtitle">{{ episode.subtitle }}</div>
 
-		    {% if contributor_column %}
-		    </td>
-			<td>
-		    {% endif %}
+            {% if contributor_column %}
+            </td>
+            <td>
+            {% endif %}
 
                 {# contributor avatars #}
                 <div class="episode_contributor_avatars">
@@ -78,7 +57,7 @@
                 {% for contributor in episode.contributors({group: group, role: role}) %}
                     {{ contributor.name }}{% if not loop.last %}, {% endif %}
                 {% endfor %}
-				</div>
+                </div>
 
             </td>
         </tr>
