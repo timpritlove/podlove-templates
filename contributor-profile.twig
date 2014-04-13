@@ -1,0 +1,63 @@
+{# Template: contributor-profile #}
+{# Version: 1.0 #}
+
+
+{% if not avatar_size %}
+	{% set avatar_size = 128 %}
+{% endif %}
+
+{% if not avatar_size %}
+	{% set avatar_size = 128 %}
+{% endif %}
+
+
+<div class="contributor-profile">
+	{% set contributor = podcast.contributors({scope: "podcast", id: userid}) %}
+    {% if contributor %}
+		<img src="{{ contributor.avatar.url }}" title="{{ contributor.name }}" height="{{ avatar_size }}" width="{{ avatar_size }}"/ /><br/>
+		<strong>{{ contributor.name }}</strong>
+	    {%if contributor.comment %}
+	    	<br/><em>{{ contributor.comment }}</em>
+	    {% endif %}
+
+
+        {% if social == "yes" %}
+			{% for service in contributor.services({type: "social"}) %}
+	        {% if loop.first %}<br/>{% endif %}
+				<a target="_blank" title="{{ service.title }}" href="{{ service.profileUrl }}">
+					<img width="32" height="32" src="{{ service.logoUrl }}" class="podlove-contributor-button" alt="{{ service.title }}" />
+				</a>
+			{% endfor %}
+		{% endif %}
+
+        {% if donations == "yes" %}
+			{% for service in contributor.services({type: "donation"}) %}
+	        {% if loop.first %}<br/>{% endif %}
+				<a target="_blank" title="{{ service.title }}" href="{{ service.profileUrl }}">
+					<img width="32" height="32" src="{{ service.logoUrl }}" class="podlove-contributor-button" alt="{{ service.title }}" />
+				</a>
+			{% endfor %}
+		{% endif %}
+
+
+		{% if flattr == "yes" and contributor.flattr %}
+			<br/><a target="_blank"
+				class="FlattrButton"
+				title="Flattr {{ contributor.name }}"
+				rel="flattr;uid:{{ contributor.flattr }};button:compact;popout:0"
+				href="{{ contributor.flattr_url }}">
+					Flattr {{ contributor.name }}
+			</a>
+		{% endif %}
+
+	{% endif %}
+</div>
+
+
+<style>
+	div.contributor-profile {
+		float:right;
+	    margin-left: 20px;
+	    margin-left: 20px;
+   }
+</style>
