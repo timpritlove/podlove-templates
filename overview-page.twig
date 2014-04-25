@@ -8,8 +8,20 @@
 {% import "metaebene-macros" as metaebene %}
 
 {% if not avatar_size %}
-  {% set avatar_size = '64' %}
+  {% set avatar_size = '128' %}
 {% endif %}
+
+{% if not icon_size %}
+  {% set icon_size = '96' %}
+{% endif %}
+
+
+{% if not role %}
+  {% set role = 'guest' %}
+{% endif %}
+
+
+<div class="episode-overview">
 
 {% set episode_count = 0 %}
 {% for episode in podcast.episodes %}
@@ -29,14 +41,14 @@
             {{ episode.player }}
 
 			{% if episode.contributors({group: group, role: role}) %}
-			<div style="float:right; margin-left: 10px;">
+			<div class="episode-contributors">
 				<table>
 					<colgroup>
 					{% for contributor in episode.contributors({group: group, role: role}) %}
 				    	<col width="{{ avatar_size }}px" />
 			        {% endfor %}
 					</colgroup>
-						<tr>
+					<tr>
 						{% for contributor in episode.contributors({group: group, role: role}) %}
 				    	<td style="vertical-align: top; width: {{ avatar_size }}px">
 							<img src="{{ contributor.avatar.url }}" title="{{ contributor.name }}" height="{{ avatar_size }}" width="{{ avatar_size }}"/ /><br/>
@@ -46,57 +58,86 @@
 			                <em>{{ contributor.comment }}</em>
 			                {% endif %}
 			            </td>
-			            {% endfor %}
+                        {% endfor %}
 					</tr>
 			    </table>
 			</div>
 			{% endif %}
 
-            <p class="episode_summary">{{ episode.summary }}</p>
-			
+            <p class="episode-summary">{{ episode.summary }}</p>
+
+			<p><a title="{{ episode.title }}" href="{{ episode.url }}">Zur Sendungsseite...</a></p>
+
+			<div class="episode-footer">
+            </div>
 		</div>
     {% endif %}
 {% endfor %}
 
 {% if episode_count > 1 %}
+	<h2>Frühere Sendungen</h2>
     <div class="recent-episodes">
 		<table>
-		{% set episode_count = 0 %}
-		{% set recent_episodes = 5 %}
+    		{% set episode_count = 0 %}
+    		{% set recent_episodes = 5 %}
 
-	    <colgroup>
-	        <col id="episode_icon" width="{{ icon_size + 16 }}" />
-	        <col id="episode_description" />
-		</colgroup>
+    	    <colgroup>
+    	        <col id="episode_icon" width="{{ icon_size + 16 }}" />
+    	        <col id="episode_description" />
+    		</colgroup>
 
-	    {% for episode in podcast.episodes %}
-		    {% set episode_count = episode_count + 1 %}
-		    {% set recent_episodes = recent_episodes - 1 %}
-		    {% if recent_episodes > 0 %}
-		        <tr id="{{ episode.slug }}" class="archive_episode_row">
-		            <td class="episode_icon">
-		                <a href="{{ episode.url }}"><img src="{{ episode.imageUrlWithFallback }}" width="{{ icon_size }}" height="{{ icon_size }}"></a>
-		            </td>
-		            <td class="episode_description">
-		                <div class="episode_title"><a href="{{ episode.url }}">{{ episode.title }}</a></div>
-		                <div class="episode_subtitle">{{ episode.subtitle }}</div>
+    		<tbody>
+    		    {% for episode in podcast.episodes %}
+    			    {% set episode_count = episode_count + 1 %}
+    			    {% set recent_episodes = recent_episodes - 1 %}
+    			    {% if recent_episodes > 0 and episode_count > 1 %}
+    			        <tr id="{{ episode.slug }}" class="archive_episode_row">
+    			            <td class="episode_icon">
+    			                <a href="{{ episode.url }}"><img src="{{ episode.imageUrlWithFallback }}" width="{{ icon_size }}" height="{{ icon_size }}"></a>
+    			            </td>
+    			            <td class="episode-description">
+    			                <h2 class="recent-episode-title"><a href="{{ episode.url }}">{{ episode.title }}</a></h2>
+    			                <div class="recent-episode-subtitle">{{ episode.subtitle }}</div>
+								<div class="recent-episode-contributors">
+					                {% for contributor in episode.contributors({group: group, role: role}) %}
+					                    {% if loop.first %}Mit: {% endif %}{{ contributor.name }}{% if not loop.last %}, {% endif %}
+					                {% endfor %}
+								</div>
 
-		                <div class="episode_meta">
-		                    {{ metaebene.print_date(episode.publicationDate, language) }} {{ metaebene.print_duration(episode.duration, language) }}
-		                </div>
-		            </td>
-		        </tr>
-			{% endif %}
-	    {% endfor %}
-	    </tbody>
-
+    			                <div class="episode_meta">
+    			                    {{ metaebene.print_date(episode.publicationDate, language) }} {{ metaebene.print_duration(episode.duration, language) }}
+    			                </div>
+    			            </td>
+    			        </tr>
+    				{% endif %}
+    			{% endfor %}
+    	    </tbody>
+		</table>
     </div>
 {% endif %}
+</div>
 
 <style>
 div.featured-episode {
 	background-color: #eee;
+    padding: 12px;
+	margin-bottom: 24px;
 }
 
+div.podlovewebplayer_wrapper {
+	margin-bottom: 24px;
+}
 
+div.episode-contributors {
+	float: right;
+	margin-left: 10px;
+}
+
+div.recent-episode-contributors {
+	font-weight: bold;
+}
+
+div.episode-footer {
+	clear: right;
+}
 </style>
