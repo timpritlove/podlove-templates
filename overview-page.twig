@@ -64,7 +64,7 @@
 			</div>
 			{% endif %}
 
-            <p class="episode-summary">{{ episode.summary }}</p>
+            <p class="episode-summary">{{ episode.summary|nl2br }}</p>
 
 			<p><a title="{{ episode.title }}" href="{{ episode.url }}">Zur Sendungsseite...</a></p>
 
