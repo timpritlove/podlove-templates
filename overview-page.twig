@@ -1,23 +1,27 @@
-{# Metaebene overview-page template v0.2 #}
+{# Metaebene overview-page template v0.3 #}
 
-{# group - define the contributor group to be listed #}
+{# option.group - define the contributor group to be listed #}
 {# role - define the contributor role to be listed #}
 {# contributor_column - define the contributor role to be listed #}
 
 
 {% import "metaebene-macros" as metaebene %}
 
-{% if not avatar_size %}
-  {% set avatar_size = '128' %}
+{% if option.icon_size %}
+    {% set icon_size = icon.icon_size %}
+{% else %}
+    {% set icon_size = '96' %}
 {% endif %}
 
-{% if not icon_size %}
-  {% set icon_size = '96' %}
+{% if option.avatar_size %}
+    {% set avatar_size = option.avatar_size %}
+{% else %}
+    {% set avatar_size = '48' %}
 {% endif %}
 
 
-{% if not role %}
-  {% set role = 'guest' %}
+{% if not option.role %}
+  {% set option.role = 'guest' %}
 {% endif %}
 
 
@@ -40,16 +44,16 @@
 
             {{ episode.player }}
 
-			{% if episode.contributors({group: group, role: role}) %}
+			{% if episode.contributors({group: option.group, role: option.role}) %}
 			<div class="episode-contributors">
 				<table>
 					<colgroup>
-					{% for contributor in episode.contributors({group: group, role: role}) %}
+					{% for contributor in episode.contributors({group: option.group, role: option.role}) %}
 				    	<col width="{{ avatar_size }}px" />
 			        {% endfor %}
 					</colgroup>
 					<tr>
-						{% for contributor in episode.contributors({group: group, role: role}) %}
+						{% for contributor in episode.contributors({group: option.group, option.role: role}) %}
 				    	<td style="vertical-align: top; width: {{ avatar_size }}px">
 							<img src="{{ contributor.avatar.url }}" title="{{ contributor.name }}" height="{{ avatar_size }}" width="{{ avatar_size }}"/ /><br/>
 							<strong>{{ contributor.name }}</strong>
@@ -99,7 +103,7 @@
     			                <h2 class="recent-episode-title"><a href="{{ episode.url }}">{{ episode.title }}</a></h2>
     			                <div class="recent-episode-subtitle">{{ episode.subtitle }}</div>
 								<div class="recent-episode-contributors">
-					                {% for contributor in episode.contributors({group: group, role: role}) %}
+					                {% for contributor in episode.contributors({group: option.group, role: option.role}) %}
 					                    {% if loop.first %}Mit: {% endif %}{{ contributor.name }}{% if not loop.last %}, {% endif %}
 					                {% endfor %}
 								</div>

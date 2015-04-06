@@ -1,25 +1,31 @@
 {# Template: podcast-archive template #}
-{# Version: 1.3 #}
+{# Version: 1.4 #}
 
-{# group - define the contributor group to be listed #}
-{# role - define the contributor role to be listed #}
-{# contributor_column - define the contributor role to be listed #}
+{# option.group - define the contributor group to be listed #}
+{# option.role - define the contributor role to be listed #}
+{# option.contributor_column - define the contributor role to be listed #}
+{# option.icon_size - vertical size of episode icon #}
+{# option.avatar_size - vertical size of avatar icon #}
 
 {% import "metaebene-macros" as metaebene %}
 
-
-{% set icon_size = '96' %}
-
-{% if not avatar_size %}
-  {% set avatar_size = '48' %}
+{% if option.icon_size %}
+    {% set icon_size = icon.icon_size %}
+{% else %}
+    {% set icon_size = '96' %}
 {% endif %}
 
+{% if option.avatar_size %}
+    {% set avatar_size = option.avatar_size %}
+{% else %}
+    {% set avatar_size = '48' %}
+{% endif %}
 
 <table>
     <colgroup>
         <col id="episode_icon" width="{{ icon_size + 16 }}" />
         <col id="episode_description" />
-        {% if contributor_column %}
+        {% if option.contributor_column %}
         <col id="episode_contributors" />
         {% endif %}
     </colgroup>
@@ -28,6 +34,10 @@
         <tr id="{{ episode.slug }}" class="archive_episode_row">
             <td class="episode_icon">
                 <img src="{{ episode.imageUrlWithFallback }}" width="{{ icon_size }}" height="{{ icon_size }}">
+                {% if option.flattr == "yes" %}
+                    <br/>
+                    {{ flattr.button({ url: episode.url }) }}
+                {% endif %}
             </td>
             <td class="episode_description">
                 <div class="episode_title"><a href="{{ episode.url }}">{{ episode.title }}</a></div>
@@ -41,21 +51,21 @@
 
                 <div class="episode_subtitle">{{ episode.subtitle }}</div>
 
-            {% if contributor_column %}
+            {% if option.contributor_column %}
             </td>
             <td>
             {% endif %}
 
                 {# contributor avatars #}
                 <div class="episode_contributor_avatars">
-                {% for contributor in episode.contributors({group: group, role: role}) %}
+                {% for contributor in episode.contributors({group: option.group, role: option.role}) %}
                     <img src="{{ contributor.avatar.url }}" title="{{ contributor.name }}" height="{{ avatar_size }}" width="{{ avatar_size }}"/ />
                 {% endfor %}
                 </div>
 
                 {# contributor names #}
                 <div class="episode_contributor_names">
-                {% for contributor in episode.contributors({group: group, role: role}) %}
+                {% for contributor in episode.contributors({group: option.group, role: option.role}) %}
                     {{ contributor.name }}{% if not loop.last %}, {% endif %}
                 {% endfor %}
                 </div>

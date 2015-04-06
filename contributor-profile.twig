@@ -1,28 +1,35 @@
 {# Template: contributor-profile #}
-{# Version: 1.0 #}
+{# Version: 1.1 #}
 
 
-{% if not avatar_size %}
-	{% set avatar_size = 128 %}
+{% if option.icon_size %}
+    {% set icon_size = icon.icon_size %}
+{% else %}
+    {% set icon_size = '96' %}
 {% endif %}
 
-{% if not avatar_size %}
-	{% set avatar_size = 128 %}
+{% if option.avatar_size %}
+    {% set avatar_size = option.avatar_size %}
+{% else %}
+    {% set avatar_size = '48' %}
 {% endif %}
 
 
 <div class="contributor-profile">
-	{% set contributor = podcast.contributors({scope: "podcast", id: userid}) %}
+	{% set contributor = podcast.contributors({scope: "podcast", id: option.userid}) %}
     {% if contributor %}
-		<img src="{{ contributor.avatar.url }}" title="{{ contributor.name }}" height="{{ avatar_size }}" width="{{ avatar_size }}"/ /><br/>
+		<img src="{{ contributor.avatar.url }}" title="{{ contributor.name }}" height="{{ avatar_size }}" width="{{ avatar_size }}"/ />
+	    {%if option.show_name == "yes" %}
+		<br/>
 		<strong>{{ contributor.name }}</strong>
+		{% endif %}
 	    {%if contributor.comment %}
 	    	<br/><em>{{ contributor.comment }}</em>
 	    {% endif %}
 
 
-        {% if social == "yes" %}
-			{% for service in contributor.services({type: "social"}) %}
+        {% if option.social == "yes" %}
+			{% for service in contributor.services({category: "social"}) %}
 	        {% if loop.first %}<br/>{% endif %}
 				<a target="_blank" title="{{ service.title }}" href="{{ service.profileUrl }}">
 					<img width="32" height="32" src="{{ service.logoUrl }}" class="podlove-contributor-button" alt="{{ service.title }}" />
@@ -30,8 +37,8 @@
 			{% endfor %}
 		{% endif %}
 
-        {% if donations == "yes" %}
-			{% for service in contributor.services({type: "donation"}) %}
+        {% if option.donations == "yes" %}
+			{% for service in contributor.services({category: "donation"}) %}
 	        {% if loop.first %}<br/>{% endif %}
 				<a target="_blank" title="{{ service.title }}" href="{{ service.profileUrl }}">
 					<img width="32" height="32" src="{{ service.logoUrl }}" class="podlove-contributor-button" alt="{{ service.title }}" />
@@ -40,7 +47,7 @@
 		{% endif %}
 
 
-		{% if flattr == "yes" and contributor.flattr %}
+		{% if option.flattr == "yes" and contributor.flattr %}
 			<br/><a target="_blank"
 				class="FlattrButton"
 				title="Flattr {{ contributor.name }}"
