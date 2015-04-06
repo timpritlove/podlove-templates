@@ -1,17 +1,17 @@
 {# Template: contributor-profile #}
 {# Version: 1.1 #}
 
+{# option.userid     --- Name of user to be shown #}
+{# option.social     --- Display Social Icons #}
+{# option.donations  --- Display Donation Icons #}
+{# option.flattr     --- Display Contributor Flattr Button #}
+{# option.show_name  --- Show Contributor Name #}
 
-{% if option.icon_size %}
-    {% set icon_size = icon.icon_size %}
-{% else %}
-    {% set icon_size = '96' %}
-{% endif %}
 
 {% if option.avatar_size %}
     {% set avatar_size = option.avatar_size %}
 {% else %}
-    {% set avatar_size = '48' %}
+    {% set avatar_size = '128' %}
 {% endif %}
 
 
