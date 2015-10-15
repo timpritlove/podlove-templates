@@ -1,7 +1,5 @@
 {# Template: metaebene-macros #}
-{# Version: 1.0 #}
-
-
+{# Version: 1.2 #}
 
 
 {% macro translate(term, language) %}
@@ -22,17 +20,26 @@
 {% macro print_date(date, language) %}
 	{% import _self as meta %}
 
-	{% set calendar_icon_url = 'http://meta.metaebene.me/media/metaebene/images/icon-calendar-128x128.png' %}
+    {% set images_urlpath = 'http://meta.metaebene.me/media/metaebene/images/' %}
+	{% set calendar_icon_url = images_urlpath ~ "icon-calendar" %}
 
-	<img class="tiny_icon" src="{{ calendar_icon_url }}" width="16" height="16" /> {{ date.format('d.m.Y') }}
+	<img class="tiny_icon"
+	    src="{{ calendar_icon_url ~ '-32x32.png' }}"
+	    srcset="{{ calendar_icon_url ~ '-32x32.png' }} 1x, {{ calendar_icon_url ~ '-64x64.png' }} 2x, {{ calendar_icon_url ~ '-128x128.png' }} 3x"
+	    width="16" height="16" />
+	    {{ date.format('d.m.Y') }}
 {% endmacro %}
 
 {% macro print_duration(duration, language) %}
 	{% import _self as meta %}
 
-	{% set time_icon_url = 'http://meta.metaebene.me/media/metaebene/images/icon-time-128x128.png' %}
+    {% set images_urlpath = 'http://meta.metaebene.me/media/metaebene/images/' %}
+	{% set time_icon_url = images_urlpath ~ "icon-time" %}
 
-	<img class="tiny_icon" src="{{ time_icon_url }}" width="16" height="16" />                    
+	<img class="tiny_icon"
+	    src="{{ time_icon_url ~ '-32x32.png' }}"
+	    srcset="{{ time_icon_url ~ '-32x32.png' }} 1x, {{ time_icon_url ~ '-64x64.png' }} 2x, {{ time_icon_url ~ '-128x128.png' }} 3x"
+	    width="16" height="16" />                    
 	{% if duration.hours == 1 %}
 		{{ duration.hours }} {{ meta.translate("hour", language) }}
 	{% elseif duration.hours != 0 %}

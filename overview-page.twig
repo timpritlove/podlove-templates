@@ -1,8 +1,10 @@
-{# Metaebene overview-page template v0.3 #}
+{# Metaebene overview-page template v0.4 #}
 
-{# option.group - define the contributor group to be listed #}
-{# role - define the contributor role to be listed #}
-{# contributor_column - define the contributor role to be listed #}
+{# option.group       --- define the contributor group to be listed #}
+{# option.role        --- define the contributor role to be listed #}
+{# contributor_column --- define the contributor role to be listed #}
+{# language           --- define the contributor role to be listed #}
+
 
 
 {% import "metaebene-macros" as metaebene %}
@@ -19,11 +21,11 @@
     {% set avatar_size = '48' %}
 {% endif %}
 
-
+{#
 {% if not option.role %}
   {% set option.role = 'guest' %}
 {% endif %}
-
+#}
 
 <div class="episode-overview">
 
@@ -38,8 +40,8 @@
             <p class="episode_subtitle"><strong><em>{{ episode.subtitle }}</em></strong></p>
 
             <p class="episode_meta">
-                    {{ metaebene.print_date(episode.publicationDate, language) }} 
-                    {{ metaebene.print_duration(episode.duration, language) }}
+                    {{ metaebene.print_date(episode.publicationDate, option.language) }} 
+                    {{ metaebene.print_duration(episode.duration, option.language) }}
 			</p>
 
             {{ episode.player }}
@@ -53,9 +55,10 @@
 			        {% endfor %}
 					</colgroup>
 					<tr>
-						{% for contributor in episode.contributors({group: option.group, option.role: role}) %}
+						{% for contributor in episode.contributors({group: option.group, role: option.role}) %}
 				    	<td style="vertical-align: top; width: {{ avatar_size }}px">
-							<img src="{{ contributor.avatar.url }}" title="{{ contributor.name }}" height="{{ avatar_size }}" width="{{ avatar_size }}"/ /><br/>
+                            {{ contributor.image.html({retina: true, width: avatar_size, title: contributor.name, alt: contributor.name }) }}
+							<br/>
 							<strong>{{ contributor.name }}</strong>
 			                {%if contributor.comment %}
 			                <br/>
@@ -93,17 +96,22 @@
     		<tbody>
     		    {% for episode in podcast.episodes %}
     			    {% set episode_count = episode_count + 1 %}
-    			    {% set recent_episodes = recent_episodes - 1 %}
-    			    {% if recent_episodes > 0 and episode_count > 1 %}
+    			    {% if recent_episodes >= 0 and episode_count > 1 %}
     			        <tr id="{{ episode.slug }}" class="archive_episode_row">
-    			            <td class="episode_icon">
-    			                <a href="{{ episode.url }}"><img src="{{ episode.imageUrlWithFallback }}" width="{{ icon_size }}" height="{{ icon_size }}"></a>
-    			            </td>
+
+                            <td class="episode_guest_avatar" style="width: {{ avatar_size }}px" > 
+                            {# contributor avatars #}
+                            {% for contributor in episode.contributors({group: 'onair', role: 'guest'}) %}
+                                <a href="{{ episode.url }}">
+                                    {{ contributor.image.html({retina: true, width: avatar_size, title: contributor.name, alt: contributor.name }) }}
+                                </a>
+                            {% endfor %}
+
     			            <td class="episode-description">
     			                <h2 class="recent-episode-title"><a href="{{ episode.url }}">{{ episode.title }}</a></h2>
     			                <div class="recent-episode-subtitle">{{ episode.subtitle }}</div>
 								<div class="recent-episode-contributors">
-					                {% for contributor in episode.contributors({group: option.group, role: option.role}) %}
+					                {% for contributor in episode.contributors({group: group, role: role}) %}
 					                    {% if loop.first %}Mit: {% endif %}{{ contributor.name }}{% if not loop.last %}, {% endif %}
 					                {% endfor %}
 								</div>
@@ -114,6 +122,7 @@
     			            </td>
     			        </tr>
     				{% endif %}
+    			    {% set recent_episodes = recent_episodes - 1 %}
     			{% endfor %}
     	    </tbody>
 		</table>

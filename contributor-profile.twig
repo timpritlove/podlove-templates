@@ -1,5 +1,5 @@
 {# Template: contributor-profile #}
-{# Version: 1.1.1 #}
+{# Version: 1.2 #}
 
 {# option.userid     --- Name of user to be shown #}
 {# option.social     --- Display Social Icons #}
@@ -14,25 +14,20 @@
     {% set avatar_size = '128' %}
 {% endif %}
 
-
 <div class="contributor-profile">
 	{% set contributor = podcast.contributors({scope: "podcast", id: option.userid}) %}
     {% if contributor %}
-		<img src="{{ contributor.avatar.url }}" title="{{ contributor.name }}" height="{{ avatar_size }}" width="{{ avatar_size }}"/ />
+        {{ contributor.image.html({ width: avatar_size, title: contributor.name, alt: contributor.name }) }}
 	    {%if option.show_name == "yes" %}
 		<br/>
 		<strong>{{ contributor.name }}</strong>
 		{% endif %}
-	    {%if contributor.comment %}
-	    	<br/><em>{{ contributor.comment }}</em>
-	    {% endif %}
-
 
         {% if option.social == "yes" %}
 			{% for service in contributor.services({category: "social"}) %}
 	        {% if loop.first %}<br/>{% endif %}
 				<a target="_blank" title="{{ service.title }}" href="{{ service.profileUrl }}">
-					<img width="32" height="32" src="{{ service.logoUrl }}" class="podlove-contributor-button" alt="{{ service.title }}" />
+                {{ service.image.html({ width: 32, class: "podlove-contributor-button", alt: service.title }) }}
 				</a>
 			{% endfor %}
 		{% endif %}
@@ -41,7 +36,7 @@
 			{% for service in contributor.services({category: "donation"}) %}
 	        {% if loop.first %}<br/>{% endif %}
 				<a target="_blank" title="{{ service.title }}" href="{{ service.profileUrl }}">
-					<img width="32" height="32" src="{{ service.logoUrl }}" class="podlove-contributor-button" alt="{{ service.title }}" />
+                {{ service.image.html({ width: 32, class: "podlove-contributor-button", alt: service.title }) }}
 				</a>
 			{% endfor %}
 		{% endif %}
