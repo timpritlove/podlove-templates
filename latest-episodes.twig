@@ -1,0 +1,41 @@
+{% set list = network.lists({id: option.list }) %}
+
+{% set icon_size = 64 %}
+
+<table>
+    <thead>
+        <th style="width: {{ icon_size + 10 }}px"></th>
+        <th style="width: {{ icon_size + 10 }}px"></th>
+        <th>Titel</th>
+        <th>Dauer</th>
+    </thead>
+    <tbody>
+
+        {% for episode in list.episodes({limit: option.limit}) %}
+            {% set podcast = episode.podcast %}
+            
+            <tr class="podcast_archive_element">
+            	<td class="thumbnail">
+                    {% if episode.image %}
+            	    <a href="{{ episode.url }}">
+                        {{ episode.image.html({retina: true, width: icon_size, title: episode.title.blog }) }}
+
+            	    </a>
+                    {% endif %}
+            	</td>
+            	<td class="thumbnail">
+            	    <a href="{{ podcast.landingPageUrl }}">
+                        {{ podcast.image.html({retina: true, width: icon_size, title: podcast.title }) }}
+            	    </a>
+            	</td>
+            	<td class="title" style="vertical-align:top">
+            		<a href="{{ episode.url }}"><strong>{{ episode.title.blog }}</strong></a><br/>
+            		<strong>{{ podcast.title }}</strong><br/>{{ episode.publicationDate }}<br/>
+            	</td>
+            	<td class="duration" style="vertical-align:top">{{ episode.duration }}</td>
+            </tr>
+            
+        {% endfor %}
+
+    </tbody>
+</table>
